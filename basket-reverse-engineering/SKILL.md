@@ -1,6 +1,6 @@
 ---
 name: basket-reverse-engineering
-description: Reverse-engineers a stock basket (pasted text, screenshot or table). Infers what the names are trading (themes, ideas, strategies), how exposed each name is to each theme, how the names were picked and weighted, which extra filters the author applied beyond thematic exposure, and the investment thesis. Use when the user sends a basket and asks what it is, what it is betting on, or to guess the theme, selection rule or strategy behind it. Also triggers on Chinese requests such as 这个篮子在炒什么, 这个篮子是什么主题, 帮我看看这个篮子, 猜一下他们的选股逻辑, 反推篮子, 拆解篮子。
+description: Reverse-engineers a stock basket (pasted text, screenshot or table). Infers what the names are trading (themes, ideas, strategies), how exposed each name is to each theme, how the names were picked and weighted, which extra filters the author applied beyond thematic exposure, and the investment thesis. Use when the user sends a basket and asks what it is, what it is betting on, or to guess the theme, selection rule or strategy behind it. Also triggers on Chinese requests such as 这个篮子在炒什么、这个篮子是什么主题、帮我看看这个篮子、猜一下他们的选股逻辑、反推篮子、拆解篮子。
 compatibility: Needs web search, access to company fundamentals and daily price data (e.g. Yahoo Finance), and vision for screenshot input.
 metadata:
   author: Hogan Tong
