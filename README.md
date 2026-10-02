@@ -5,6 +5,7 @@ Reusable instructions and resources for AI agents. Each skill explains what it d
 ## Skills
 
 - [Basket reverse engineering](basket-reverse-engineering/SKILL.md): infer a stock basket’s themes, selection logic, filters, and thesis.
+- [Quant literature research](quant-literature-research/SKILL.md): verify quantitative finance sources, assess replication and implementation evidence, and prepare a backtest handoff. Requires web search and source access.
 
 ## Adding a skill
 
