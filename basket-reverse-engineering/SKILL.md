@@ -1,341 +1,325 @@
 ---
 name: basket-reverse-engineering
-description: Reverse-engineers a stock basket (pasted text, screenshot or table). Infers what the names are trading (themes, ideas, strategies), how exposed each name is to each theme, how the names were picked and weighted, which extra filters the author applied beyond thematic exposure, and the investment thesis. Use when the user sends a basket and asks what it is, what it is betting on, or to guess the theme, selection rule or strategy behind it. Also triggers on Chinese requests such as 这个篮子在炒什么、这个篮子是什么主题、帮我看看这个篮子、猜一下他们的选股逻辑、反推篮子、拆解篮子。
-compatibility: Needs web search, access to company fundamentals and daily price data (e.g. Yahoo Finance), and vision for screenshot input.
+description: Reverse-engineer an existing stock basket's investment idea, selection criteria and weights, including muddled or inconsistent construction. Use for basket interpretation or 反推篮子、拆解篮子, not requests to build a new basket.
 metadata:
   author: Hogan Tong
-  version: "1.0.1"
+  version: "1.1.3"
 ---
 
 # Basket Reverse-Engineering
 
-## Purpose
-Baskets arrive from clients, colleagues and competitor products, in any format. Work
-backwards: what are these names trading, how strongly is each name tied to each idea, how
-were the names chosen and weighted, what selection filters sit on top of the theme, and
-what is the thesis. The result is a reasoned inference, not a verdict. Grade how firm each
-conclusion is (Step 6h).
+Follow explicit user instructions over this skill's workflow and presentation defaults.
+Use the relevant steps with the tools available; do not expand the requested task.
 
-This is the reverse of building a basket. Do not rebuild the basket unless asked. Do not
-comment on whether the theme is already priced in. Do not list missing names for their own
-sake: only those that help identify a filter (Step 6).
+## Purpose and scope
+Work backwards from the names and positions: what common drivers explain them, how
+strongly each name is exposed, what made a name eligible, what selected it over eligible
+peers, and what determined its weight. The result is an inference about construction,
+not proof of the author's intent. Several rules can produce the same basket.
 
-## Reading the lists in this skill
-Every list of metrics, themes, drivers or examples here is illustrative, not exhaustive.
-Treat each as a starting point: add any other dimension the data suggests, and do not
-limit yourself to what is written.
+Do not assume the provider had a coherent investment idea or applied consistent selection
+criteria. Recover the idea as far as the evidence permits, and identify where the basket
+fails to express it. A coherent core with inconsistent additions is a useful conclusion;
+do not polish a muddled basket into a strategy its holdings do not support. Diagnose the
+construction, not the provider's intelligence, intentions or mental state.
 
-## Input
-Plain text, a screenshot (read it with vision; transcribe titles, tickers, weights and
-labels exactly), or a table or CSV. Transcribe first and state what you read in one line,
-so a misread is caught early. Titles, weights, group labels and accompanying text are
-evidence, but not every input has a title, and some come with only a sentence or a short
-description of the idea. Use whatever text exists as a lead, never as the answer: titles
-and descriptions can be marketing, loose or wrong, and the stocks decide. A typo in a
-ticker is possible: check the obvious alternatives before proceeding and say which one you
-assumed.
+Do not rebuild the basket, assess whether the theme is priced in, or add unsolicited
+investment advice. Do report contradictory evidence, data limitations and unexplained
+names. Do not assume the user created the basket. Missing peers matter only when they
+help distinguish explanations.
 
-Ask for these if missing, because they change the quality of the answer: the date the
-basket was created or last changed, other baskets from the same author, and any ETF or
-list the author says they followed.
+Use web research to verify identities and claims. Fundamentals and price data are needed
+only for relevant tests; vision is needed for screenshots. If a source or capability is
+unavailable, narrow the claim and say which test could not be run.
 
-## How the work is ordered
-Phase 1 (Steps 2-3): decide which theme or themes the basket is built on.
-Phase 2 (Steps 4-6): given those themes, work out how the stocks were chosen and weighted
-within each, and what filters sit on top. Do not start Phase 2 before Phase 1 has a
-defensible theme list.
-Steps 7-9 add evidence and checks. The output (last section) has a fixed shape.
+## Input and research depth
+Accept text, screenshots or tables. Transcribe names, identifiers, titles, labels,
+weights and position signs first; briefly state what was read. Resolve listing venue,
+share class and likely ticker typos. Ask before choosing between materially different
+identities when the input cannot resolve them; continue work on the unambiguous names.
+Titles and descriptions are leads, not conclusions.
 
-## Step 1. Identify every name properly
-- Search each name: main business, segment revenue mix, market cap, listing date and
-  venue. Never work from memory. Unrecognised names may be recent IPOs, renamed companies
-  or spin-offs: say so, do not guess what they do, and if a name cannot be identified, say
-  so.
-- Pull a fundamentals snapshot for the set. It feeds the filter test in Step 6 and the
-  weight test in Step 5. Cover, as far as the data allows:
-  (a) Size and tradability: market cap, free float, average daily traded value (ADV),
-  listing date and venue, country and currency, index membership.
-  (b) Growth: revenue and EPS growth (trailing and forward), estimate revisions.
-  (c) Profitability and quality: gross, operating and net margin, ROE, ROIC, FCF margin,
-  earnings stability, R&D and capex intensity.
-  (d) Balance sheet: net debt/EBITDA, interest cover, cash runway for loss-makers,
-  dilution.
-  (e) Valuation across several multiples, not just P/E: forward and trailing P/E, EV/Sales,
-  EV/EBITDA, EV/EBIT, P/B, P/FCF or FCF yield, PEG, dividend yield, and sector-specific
-  ones where they fit (P/NAV, EV/subscriber, EV/reserves, etc.). Use the multiple that the
-  market actually uses for that business.
-  (f) Analyst view: consensus rating (buy/hold/sell split), target-price upside, number of
-  analysts covering, direction of recent rating and EPS revisions, dispersion of
-  estimates.
-  (g) Price behaviour and positioning: returns over several windows (1m, 3m, 6m, 12m,
-  12-1m), distance from 52-week high, beta and volatility, drawdown, short interest,
-  institutional and insider ownership.
-  (h) Anything else the basket points to, etc.
-  Use values as of the basket's creation date where known, and say where you had to use
-  current data.
+Look for the creation date, observation date, last rebalance, source methodology, other
+baskets from the author, and any stated reference universe. Ask for missing context only
+when it would materially change the interpretation and cannot reasonably be inferred.
+Otherwise proceed with explicit assumptions. Do not make optional context a prerequisite.
 
-## Step 2. Brainstorm the themes: what could these names be trading?
-A theme does not have to be a sector. It can be a macro or policy driver, a demand cycle,
-a business-model trait (pricing power, installed-base annuity, serial M&A), a style
-(quality, momentum, low leverage) or a trade structure (barbell, hedge, diversifier).
-Diverge first, then prune. Do not start from your own prior about what the companies do.
+Start with identity, business mix, relevant dates and the supplied positions. Form
+plausible explanations before pulling detailed metrics. Collect data that can distinguish
+those explanations, expanding the peer set only when another comparison could change the
+conclusion. Lists below are examples, not mandatory data collection checklists.
 
-Generate candidates from outside evidence:
-1. Segment and end-market data from filings. Good for measurable sector themes, blind to
-   narratives and styles.
-2. Sell-side research and earnings-call language: what story is each name covered under?
-   Rank sources: serious, named, accountable research first, then reputable newsletters,
-   then general news, company websites last. Promotional research is not evidence.
-3. News: what recent events repriced these names together (contract awards, budgets,
-   policy, a competitor's guidance, a supply shock)? Note which names moved most. One event
-   is a small, confounded sample, but the market's reaction shows which ideas it ties to
-   which names. Use excess returns over a stated window and real price data.
-4. Thematic ETFs and published baskets that hold several of these names. Pre-screening
-   only: they suggest the label the market uses and never prove a theme.
-5. Market-implied clusters: residual co-movement among the names and loadings on sector,
-   style or theme ETFs.
-6. The basket's own title, group labels and any accompanying text or short description,
-   if present. A lead only: many inputs have none, and text can mislead. Never build the
-   theme list on it alone.
-7. Other directions to try (a starting list only): geography or regional policy; regulation
-   or subsidy; commodity or input-cost exposure; rates, FX or other macro sensitivity; a
-   supply-chain bottleneck; a technology adoption curve; a capital-spending cycle; corporate
-   actions (spin-offs, takeover targets, activism); ownership structure (state-owned,
-   family-controlled, insider-held); shareholder returns (buybacks, dividends);
-   balance-sheet themes (net cash, deleveraging); positioning (crowding, short squeeze,
-   retail attention); index or ETF flow events (inclusion, rebalance, lock-up expiry);
-   demographics; climate or transition; and pair or hedge structures, etc.
+## Evidence and dates
+- Match the source to the claim: filings and official disclosures for business mix;
+  official methodology for construction rules; dated research, earnings calls and news
+  for market narratives; documented market data for prices and positioning. Company
+  disclosures can establish facts, while promotional claims need corroboration.
+- Keep a compact working record of decisive claims, source links, publication dates,
+  observation periods and whether each value is disclosed, calculated, estimated or
+  inferred. Link the decisive evidence beside the corresponding output claim.
+- For historical reconstruction, use information available at the construction or
+  rebalance date. A later publication about an earlier financial period is not information
+  the author necessarily had. Apply this to fundamentals, estimates, ETF holdings,
+  classifications and corporate actions as well as prices.
+- Mark current-data substitutions or later evidence explicitly. They can describe today's
+  exposure but cannot establish the historical selection rule. Missing data is unknown,
+  not zero, a failed threshold, or proof that a name was ineligible.
 
-How fine should the sector be? If the natural reading is sector-based, go much finer than
-a classification code. A theme is often a single product, technology, end-market, customer
-group or value-chain link (a component such as MLCC, a memory type, a packaging step, a
-drug class), which is finer than even the lowest GICS sub-industry. Classification codes
-group unrelated businesses under one label, so use segment and product-line revenue data,
-filings and how the companies describe themselves, and finer vendor taxonomies where they
-exist (revenue-based industry classifications from data vendors are deeper than GICS). Name
-the theme at the level where the companies really share one driver.
+## Step 1. Identify the names and establish the baseline
+Verify every company's business, listing and share class rather than relying on memory.
+Record business mix and enough size, geography and listing-history information to frame
+the basket. Flag unresolved identities, recent IPOs, renamings and spin-offs.
 
-Merge into a long candidate list, then prune with Step 3, keeping the ideas that explain
-the most names. Test one broad theme against several narrow ones and prefer the simpler
-reading only if it explains the names about as well. Keep the final list short (usually 2-4
-themes). Mark outliers: a name that defines the edge of a theme, a hedge or diversifier, a
-label-justifier (the one foreign name behind a "global" title), or noise. If no coherent
-theme explains the names, say so: it may be a style or factor basket, or names picked for a
-reason unrelated to theme. Many names are strong on more than one theme at once. Do not
-force a name into a single bucket: keep every theme it is genuinely exposed to.
+Then collect only metrics needed by a candidate explanation. Examples include free float,
+average daily traded value (ADV), index membership, revenue or EPS growth, estimate
+revisions, margins, ROIC, cash flow, leverage, cash runway, valuation, analyst views,
+momentum, volatility, short interest and ownership. Use business-appropriate valuation
+measures; compare several only when they help discriminate a valuation hypothesis.
+Keep units, currencies, measurement windows and definitions comparable across names.
 
-## Step 3. Exposure of each name to each theme
-Give a degree for every name and theme, not yes or no. Use the four plain-text grades below, and
-state the legend in the output. No emoji:
-- High: main driver: the theme drives more than roughly half of revenue or profit, or is the
-  main driver of the stock.
-- Medium: second driver: roughly 20-50%, or a clear second driver.
-- Low: minor: under roughly 20%, or present but minor.
-- None: no exposure.
-A name can score High on several themes at once. Grade each theme independently and keep all
-of them. Do not force a primary theme.
-Quantify with the revenue share where disclosed (segment, end-market or product-line data)
-and say so. Where the theme cannot be measured from financials (a style, a narrative),
-grade it on the relevant metrics and mark it as judgment. Say which figures are sourced
-and which are estimates. Never present an estimate as disclosed data.
+## Step 2. Identify the organising idea
+Consider thematic, factor/style, event-driven and trade-structure explanations. A basket
+may express quality or momentum directly; those need not be overlays on a sector theme.
+Mixed objectives are possible. Develop a small set of plausible candidates from evidence:
 
-## Step 4. Picking style within each theme
-Take each theme in turn and describe each name on the dimensions a builder would use to
-choose it, then see which dimensions the basket appears to favour:
-(a) chain position (direct play, enabler, downstream);
-(b) how much of current revenue comes from the theme;
-(c) disclosed customer and supplier links to the theme;
-(d) potential future exposure and how firm the evidence for it is (named contracts >
-committed capex > company guidance > consensus > talk);
-(e) how strongly the stock price should respond if the theme accelerates.
-- Are the names the leaders (purest, largest) or a spread across sub-themes and chain links?
-- Is there visible tiering, for example a high-torque core plus diluted large caps?
-- Which obvious names in the same theme were not picked? Only those that help expose a
-  rule (Step 6).
-The answer is the picking style: pure-play, leaders, chain spread, or something else.
+- Segment, product and end-market disclosures.
+- Dated research and earnings-call language describing the names' market narratives.
+- Shared catalysts such as policy, spending, supply shocks or corporate actions. Use
+  real excess returns over a stated window if price reactions are part of the argument;
+  a single event is confounded and does not establish causation.
+- Published baskets and ETFs as leads, not proof of a common construction rule.
+- Residual co-movement and factor loadings when they can distinguish candidates.
+- The supplied title, group labels and accompanying explanation.
 
-## Step 5. Read the structure and the weights
-- Count the names and read the group labels and title wording ("core", "satellite",
-  "global"). Note size and liquidity, survivorship and IPO age.
-- Weights are evidence about how the author thinks. Analyse them, do not just describe
-  them. First name the pattern: equal, cap-weighted, liquidity-capped, inverse-vol,
-  score-tilted, theme-bucket budgets (weights sum by theme), tiered, or hand-set with a
-  residual. Check the step size (multiples of 5% point to hand-set tiers) and whether the
-  weights were edited after publication.
-- Then test why any name is over or underweight. Put each candidate driver next to the
-  weights. Examples, not a closed list: expected price response to the theme, market cap,
-  free float, ADV, quality and pricing power (margin, ROIC, etc.), growth, valuation on
-  several multiples, analyst rating or target upside, estimate revisions, volatility or
-  beta, momentum, theme purity, number of themes the name is exposed to, chain position,
-  dividend yield, short interest, ownership, index membership, country, and theme-bucket
-  sums. Add any other driver the data points to. A driver is supported only if the over-
-  and underweights line up with it AND the equally weighted names do not spread widely on
-  it. If a driver varies a lot across equal-weight names, it is not what sets weights. Note
-  which drivers cannot be tested because too few names deviate.
-- If nothing explains the deviation, say the weights carry no information beyond roughly
-  equal (or a residual) and do not invent a reason. A basket equal-weighted across names of
-  very different size and volatility is not cap-, liquidity- or risk-weighted.
-- What the structure implies about the product: client sleeve, model portfolio, trend-test
-  sample, event basket, factor exposure, structured-product underlying.
+For sector-based ideas, identify the shared economic driver below broad classifications
+where appropriate: a product, component, technology, drug class, customer or value-chain
+link. Other drivers include geography, rates, FX, commodities, ownership, shareholder
+returns, positioning and index events. Do not force these into a sector explanation.
 
-## Step 6. Filters on top of the theme
-Question: beyond thematic exposure, what rule or judgment selected these names over similar
-ones? Use a two-sided test. Never just list the absentees. Work through 6a to 6h in order.
+Compare one broad explanation with narrower alternatives. Prefer a simpler account when
+it explains the evidence about as well, without inventing several themes for isolated
+names. One theme may suffice. Keep overlapping exposures; flag exceptions without
+inventing a hedge, diversifier or marketing role. If no coherent account emerges, say so.
+Use a provisional organising idea to guide Steps 3-6, and revise it if the comparisons
+contradict it. Do not force a defensible theme list when the evidence favours a factor or
+trade-structure basket.
 
-6a. Build two probe sets before pulling any data.
-- Should be in but absent: for every link of the theme, the chain leaders, the top ten
-  holdings of the closest ETFs, listed peers, and names this author used in other baskets.
-  Write one line per name on why it should belong, then pull data. There is no target
-  count: include every name that genuinely belongs, and do not pad. Some themes have very
-  few candidates (a component such as MLCC has only a handful of listed makers). A short
-  list is fine, but say so, because a small absent set makes the test weak (Step 6h).
-- Looks out of place but present: the basket names furthest from the theme.
+Keep three questions distinct: what the provider says the idea is, what the holdings
+actually express, and what selection criteria can explain membership. They may disagree.
+Test coherence as well as thematic coverage: sharing a fashionable label is weaker than
+sharing an economic mechanism. A multi-theme basket can be coherent, while a single-theme
+label can conceal inconsistent bets. Do not create a new sub-theme for every exception
+or call an opposing exposure a hedge merely to rescue the explanation.
 
-6b. One table, both sides together. Score every present and absent name on market cap, ADV,
-listing history, venue, growth, profitability, valuation (several multiples), analyst
-rating, momentum, ownership, theme purity, whether it sits in a sibling basket, and
-compliance status, etc. (any Step 1 metric). A quantitative filter is established only
-when there is a gap: the worst present name clears the line AND the best-fitting absent
-names fall on the wrong side. Present names all passing is not enough. If an absent name
-sits inside every band, that metric is not the filter.
+## Step 3. Separate business exposure from market sensitivity
+For each relevant name and theme, grade current business exposure independently:
+- High: roughly more than half of the stated revenue or profit measure.
+- Medium: roughly 20-50% of that measure.
+- Low: present but below roughly 20%.
+- None: evidence supports no relevant exposure.
+- Unknown: evidence is insufficient to establish the exposure or its degree.
 
-6c. Near-twin control. Purpose: hold theme exposure constant, so that whatever differs
-must be the filter, not the theme. Take an absent name that looks almost identical to a
-present one on theme, chain position and business (for example two GPU clouds), and list
-what separates them: size, liquidity, listing age, profitability, valuation, rating,
-ownership, etc. That separating dimension is a candidate rule. It is the case-level
-version of the 6b table, and it is only useful when a real near-twin exists. Do not pair
-names that are merely in the same sector. One pair proves nothing: trust a dimension only
-if several independent pairs, or the 6b table, point to it as well. If no real twin
-exists, skip 6c.
+State the denominator, period and whether the figure is disclosed or estimated. Do not
+mix revenue and profit shares without identifying the basis. These bands are a guide,
+not precision the disclosures necessarily support. Overlapping themes can each be High;
+their shares need not sum to 100%.
 
-6d. Outliers. For each looks-out-of-place name, see on which dimensions it is an outlier.
-One dimension (same IPO window, same catalyst, same sibling basket) is a clue to a rule.
-Many dimensions means a subjective addition (narrative, client holding): say "subjective,
-cannot be reverse-engineered" and do not force a rule.
+Describe share-price or narrative sensitivity separately where relevant, using High,
+Medium, Low or Unknown with its evidence and an inferred label when judgment-based.
+For example: current business exposure Low; narrative sensitivity High, inferred.
+Future opportunities do not become current revenue exposure. For factor baskets, assess
+the relevant factor measures instead of imposing revenue-share bands.
 
-6e. Order of hypotheses: mechanical threshold, then rank-based (top N on a metric), then
-theme-purity judgment, then subjective. Stop at the first level that explains the data.
+Record positive, negative, mixed or unknown sensitivity when direction matters. For
+hedges and long/short baskets, distinguish the company's sensitivity from the position's
+contribution after accounting for its sign. Do not treat two highly sensitive names as
+equivalent if their exposures offset.
 
-6f. Point in time. Check each absent name's state on the creation or update date: not yet
-listed, too small, short history, different price trend. Current data is a limitation, so
-say what the conclusion would change to if the state was different.
+## Step 4. Distinguish eligibility from selection
+Ask separately: what could enter the universe, and what selected these names within it?
+Eligibility might depend on listing, geography, tradability or an explicit mandate.
+Selection might favour thematic purity, leaders, a spread across chain links, factor
+ranks, catalyst exposure or a combination.
 
-6g. Cross-basket. If several baskets come from the same author, see how names are
-allocated between them. A name in one basket and never in another, or a name repeated on
-purpose, often exposes the partition rule. It also shows whether a filter seen in one
-basket is applied author-wide: a filter contradicted by a sibling basket is not a general
-rule.
+For thematic candidates, compare chain position, current business exposure, disclosed
+customer/supplier links, evidence of future exposure and inferred price sensitivity.
+Distinguish contracts and committed investment from guidance and speculation. For a
+factor or hedge objective, compare the relevant factor ranks or offsetting exposures.
+Only infer a tiered core/satellite structure when the evidence supports it.
 
-6h. Grade every conclusion on four levels and say what data is missing for each:
-confirmed (both sides fit), fits (one side only), suggested (a clue, not tested), not
-found. With fewer than five or six absentees the test is weak by construction: say so.
+## Step 5. Interpret and test weights
+When weights or position amounts are supplied, read [Weight interpretation and testing](references/weighting.md).
+Establish what the numbers represent before comparing weighting rules; distinguish target
+weights from drift, caps and rounding. If no amounts were supplied, skip this step.
 
-Subjective filters (inferred): sole-source or certified positions, installed-base
-aftermarket, serial-acquirer record, management quality, customer concentration, regulatory
-or reputational overhang, the author's own narrative. Mark each as inferred, give the
-evidence, and never invent a reason for an absence. A feature shared by the absent names is
-probably the real criterion and outranks the title.
+## Step 6. Test the construction explanations
+6a. Choose informative comparisons before inspecting the proposed filter values.
+Start with credible absent peers, close substitutes, relevant ETF constituents or names
+used by the same author. Explain why each is comparable without assuming it should have
+been included. Include present names least consistent with the proposed explanation.
+Expand when a further comparison could distinguish surviving hypotheses; do not enumerate
+every conceivable peer or pad a small universe.
 
-## Step 7. Co-movement as evidence, not a criterion
-Run a light co-movement check (market-adjusted daily returns, stated window, real price
-data). Low overall co-movement does not undermine a multi-theme basket. Look at co-movement
-within each theme cluster and at names that sit apart. One or two lines. If there is no
-price data, say the check was not run.
+6b. Compare included and absent names in one working table using only discriminating
+metrics. Test eligibility and selection separately. An eligibility condition can be
+necessary without being sufficient: an absent name passing a liquidity threshold does
+not disprove that threshold, but shows that it cannot explain selection alone. A present
+name failing a proposed necessary condition contradicts it unless an evidenced exception
+applies. Check dates and definitions before interpreting apparent violations.
 
-## Step 8. Thesis and strategy (working notes)
-- Thesis: the mechanism. Who spends, how it reaches these companies, what must hold.
-- Strategy: what the basket is for.
-Decide how firm each is and whether a credible alternative reading survives the tests.
-These are inputs to the Verdict and are not written out as a separate section.
+A gap between included and absent samples supports a candidate separator, not proof of
+the author's threshold. Report a feasible threshold range when that is all the data
+identify. Do not invent an exact cutoff inside it. A claimed top-N rule requires an
+adequate eligible-universe comparison; a few selected peers cannot establish the rank.
 
-## Step 9. Usability check: could a builder reproduce the basket from the brief alone?
-Design principle: hand the Verdict paragraph to an independent builder who picks stocks by
-theme (for example, one following the companion thematic-basket-construction skill), and
-they should land on roughly the same names and weights. Do not run a builder; keep that
-mindset and test the brief before writing the output. Such a builder
-thinks like this: a theme has a driver ("if this accelerates, which stocks rally most?");
-the theme is split into sub-themes and value-chain links; names are ranked by expected
-price elasticity to the theme, not by quality or size. Check the brief against that:
-- Themes are phrased as a theme or event with a driver, with sub-themes and chain links
-  named, and whether it is structural or a recurring macro event. A style or quality trait
-  (compounder, pricing power, low leverage) is not an elasticity theme: write it as a
-  selection overlay, separate from the themes, or the builder will ignore it.
-- The brief carries everything a builder would otherwise decide differently: chain
-  positions to include and exclude, any liquidity or size bar and where the data put it
-  (only if Step 6 found one), overlays, and whether delisted names were in scope. Do not
-  assume a bar that the data did not show.
-- Given only the brief, which names would a builder add that the basket lacks, and which
-  basket names would they drop? Each mismatch means the brief is missing a rule or the
-  basket holds a pick no rule explains. Fix the brief or list the name as unexplained. Do
-  not hide it.
-- A builder does not set weights, so the brief must state the weight pattern from Step 5.
-  Test weights too.
-Report the result in one or two lines at the very end of the last section of the output.
+6c. Use near-twin comparisons when companies are genuinely similar on the proposed
+exposure and business. Differences suggest candidate rules, but unobserved differences
+may also explain selection. One pair is a clue; seek corroboration from other independent
+comparisons or the broader sample. Skip this step when no real near-twin exists.
+
+6d. Leave unexplained names unexplained. Multiple unusual attributes do not establish a
+subjective choice. Call an addition discretionary or client-driven only with evidence.
+Qualitative attributes such as sole-source status, management or installed-base revenue
+also need evidence; never invent a reason for an absence.
+
+Distinguish an unexplained name from positive evidence of inconsistency. Examples of the
+latter include a stated purity rule contradicted by included businesses, comparable peers
+treated differently without an evidenced criterion, or weights that work against the
+claimed objective. Check date, mandate, position sign and plausible constraints before
+calling these contradictions. An absent explanation alone is not proof of incoherence.
+
+6e. Compare plausible threshold, ranking and qualitative explanations, including simple
+combinations where justified. Do not stop at the first fit. Compare the strongest account
+with a credible alternative and identify evidence that would separate them. Searching
+many metrics makes accidental fits easier. Prefer fewer unsupported assumptions and,
+when available, test the rule on additional peers or a dated basket not used to invent it.
+If rules remain indistinguishable, report that rather than choosing one by confidence.
+
+6f. Check both included and absent names at the relevant date using the Evidence and dates
+rules. Listing history, past liquidity, corporate actions and information release dates
+can change the conclusion. State where historical evidence is unavailable.
+
+6g. Use sibling baskets to test partition rules and author-wide conventions when available.
+Align dates and mandates before treating differences as contradictions. Overlap or
+non-overlap is evidence to explain, not proof of intentional partitioning.
+
+6h. Apply these evidence grades to construction claims, including weighting claims:
+- Confirmed: explicit methodology or author confirmation supports this specific rule and
+  its applicable version/date. Distinguish a documented rule from verified implementation;
+  disclose any mismatch with the observed basket.
+- Strongly supported: informative included/absent comparisons or weight tests support it,
+  credible alternatives have been tested, and no material contradiction is unexplained.
+  This remains an inference about intent.
+- Consistent with: the observed data fit, but comparisons, historical data or tests of
+  alternatives are insufficient to distinguish it from other explanations.
+- Unresolved: missing or contradictory evidence prevents a defensible conclusion.
+
+Assess confidence in the organising idea separately from confidence in the exact
+membership rule. Strong evidence of a shared theme or driver does not establish why these
+names were selected over eligible peers. State both findings explicitly in the output;
+apply the construction evidence grades to the membership rule, not as a substitute for
+assessing the organising idea.
+
+Keep the conclusion's strength proportional to comparison quality, independence, universe
+coverage and date alignment. There is no universal minimum peer count that establishes
+confidence. State the decisive missing evidence, not a generic disclaimer. Preserve a
+material counterexample even if it weakens the preferred explanation.
+
+## Step 7. Use co-movement only where informative
+When price relationships could distinguish explanations, read [Co-movement evidence](references/co-movement.md).
+Use real data and distinguish common market exposure from evidence of a specific idea.
+If the check is skipped or unavailable, state that briefly and why.
+
+## Step 8. Form the thesis and strategy
+Describe the mechanism: what changes, how it reaches these companies or factor exposures,
+and what the basket appears designed to express. Separate observed characteristics from
+inferred intent. Retain a credible alternative when the evidence cannot distinguish it.
+These findings feed the Verdict, not an extra output section.
+
+Make coherence judgments sensitive to position size. When weights or usable position
+amounts are absent, assess consistency of membership, not portfolio-level economic
+coherence. A discordant name may be a small peripheral holding or a dominant position;
+do not assume either, infer equal weights, or treat its presence alone as sufficient to
+invalidate the portfolio. When weights are available, distinguish a membership exception
+from a material contribution that undermines the claimed objective.
+
+Explicitly assess whether the evidence supports a coherent idea, a coherent combination
+of ideas, a recognisable core with inconsistent execution, a loose collection without a
+defensible common selection logic, or insufficient information to tell. These are useful
+distinctions, not a forced scoring system. If the basket is muddled, identify the strongest
+recoverable idea and the specific names, exposures or criteria that break it. Explain
+whether the weakness lies in the investment idea, its implementation, or both. Evidence
+of construction inconsistency is within scope; it is not unsolicited investment advice.
+
+## Step 9. Check whether the brief reproduces the construction logic
+Mentally hand the Verdict to a builder pursuing the inferred objective. Do not run a
+builder. For a thematic basket, check the driver, sub-themes and chain links; for a factor
+basket, the factor definitions and selection approach; for an event or hedge basket, the
+catalyst, position signs and intended offsets. Quality can be the objective itself or an
+overlay, depending on the evidence. Do not impose thematic elasticity as a universal rank.
+
+Check that the brief distinguishes universe constraints, selection preferences and weight
+rules, including target versus observed weights. Which names might the builder add or
+drop, and why? Which weights would differ? A mismatch can reveal a missing rule, an
+unexplained pick or several valid reconstructions. Do not fabricate constraints to recover
+exact membership. State in one or two lines whether the construction logic is reproducible
+and what remains underdetermined.
+If the basket is inconsistent, reproducing its contradictions is not a success criterion.
+Say which coherent portion can be reconstructed and which additions require arbitrary
+exceptions. Do not repair those choices or propose a replacement basket unless asked.
 
 ## Output
-Punctuation in the output (hard rule). Write like a human typing on a keyboard. No em dashes or en dashes: use a comma, colon, period or a plain hyphen "-" instead. Use straight quotes (" and ') only, never curly quotes. No ellipsis character (use three periods), no emoji, no non-breaking hyphens or special spaces. In Chinese, use the full-width punctuation a Chinese keyboard produces (，。：；？！“”（）、), never the English em dash. Before sending, scan the draft for these characters and fix them.
+Keep the answer phone-friendly and normally readable in a minute or two. Use short prose
+and lists, no tables in the default response; working tables stay in the analysis. Keep
+the four sections below, omitting IV when no weights or position amounts were supplied.
+Compress repetition before removing material uncertainty or decisive evidence. Follow a
+user-requested format or level of detail instead of forcing this default.
 
-Plain text, no tables, short enough to read in a minute or two, even on a phone. Keep the
-reasoning short: findings and conclusion, not the whole argument. Exactly four sections
-(skip section IV if no weights were given). No separate sections for concerns, usability or
-verification: Steps 7 to 9 still run and their findings go inside these sections. Write in
-the language the user writes in, using the matching label set below. Mark facts as
-disclosed, estimated or inferred where they appear. Cut explanation of method; keep results.
+Write in the user's language. For English, use plain punctuation and straight quotes;
+avoid em/en dashes, decorative characters and emoji. For Chinese, use normal full-width
+Chinese punctuation, including Chinese quotation marks. Avoid special spaces. Use section
+numbers I-IV in English and 一、二、三、四、 in Chinese; use 1., 2. or 1、2、 for items and
+(a), (b) or （1）（2） only when sub-points help. Use bold section titles if supported.
 
-Hierarchy, three levels, each with its own symbol. Never reuse one numbering style at two
-levels. The two sets below are worked examples. For any other language, translate the
-section titles and grade words (keeping the English title in brackets after the translated
-one), use that language's own numbering and punctuation conventions, and keep the three
-levels visibly different.
-- English: sections I. II. III. IV. (bold line), items 1. 2. 3. (restart in every section),
-  sub-points (a) (b).
-- Chinese: sections 一、二、三、四、 (bold line), items 1、2、3、 (restart in every section),
-  sub-points （1）（2）. Use full-width Chinese punctuation throughout.
+I. Verdict / 结论（Verdict）
+One forwardable paragraph describing the organising idea, economic logic, selected kinds
+of company or factor exposure, and weight pattern if interpretable. Do not assume an index
+is the goal. Avoid a full ticker list here, but name decisive exceptions when explaining
+inconsistency. Preserve uncertainty with concise language such
+as "appears designed to" when intent is inferred. Include only supported claims and any
+limitation that materially changes the reading. Add at most one line on a surviving
+alternative and the evidence that would distinguish it. No unsolicited investment advice.
+State the coherence finding plainly when material. For example: "The core idea appears
+to be X, but A and B express Y, and the proposed selection rule does not explain C."
+Do not bury demonstrated inconsistency under a polished theme description. If information
+is merely insufficient, say that rather than declaring the provider's idea confused.
 
-Section titles. English: Verdict, Theme Identification, Selection Method Inference,
-Weighting Inference. Chinese: 结论（Verdict）, 主题识别（Theme Identification）,
-选股方法推测（Selection Method Inference）, 加权方法推测（Weighting Inference）.
+II. Theme Identification / 主题识别（Theme Identification）
+Identify each organising theme, factor, event or hedge objective with its main supporting
+evidence. Separate secondary overlays where appropriate without relegating a primary
+factor objective to an overlay. State the exposure legend once. For a small basket,
+give a compact line per name; for a larger one, group by exposure grade and repeat names
+where exposures overlap. Keep business exposure distinct from narrative/price sensitivity
+and show direction where relevant. Unknown must remain visible; omit None entries only
+when doing so does not conceal an unexplained name. Label disclosed figures, estimates
+and inferences. Close with the co-movement result or why it was not run.
 
-I. Verdict
-One clean paragraph, not a list, that describes these stocks in a form the user can forward
-as-is to someone who would then build something similar. Write about the stocks, not about
-an index: do not say "this index" and do not assume an index is the goal. Cover the theme
-and sub-themes and the economic logic (what the stocks are trading and why), the kind of
-company picked (region, size, liquidity, chain position, revenue drivers, business
-quality), and how the weights look. Plain declarative sentences.
-Include only rules you believe are in force and leave out anything you could not support.
-No confidence levels, no "probably", no tested-versus-inferred labels, no mention of this
-analysis, no ticker list. No risks or concerns anywhere: the user built or picked the
-basket and has already done that thinking. After the paragraph add at most one line, and
-only if a credible alternative reading of the theme survived your tests: that reading and
-what would separate it. A reading your tests rejected is not mentioned.
+III. Selection Method Inference / 选股方法推测（Selection Method Inference）
+Describe selection style, then supported eligibility and selection rules separately.
+Open each rule with its Step 6h grade: Confirmed / Strongly supported / Consistent with /
+Unresolved; Chinese: 已确认 / 有较强证据支持 / 与数据一致 / 尚无法判断.
+State the decisive comparison and any material counterexample or missing evidence.
+Include sibling-basket partitioning only when supported. Avoid cataloguing rejected
+hypotheses unless a rejection explains the conclusion or corrects a likely misreading.
+State the reconstruction date and any current-data substitutions. Cite decisive claims
+where they appear; one generic source statement cannot support unrelated assertions.
 
-II. Theme Identification
-Each theme in a line with the main evidence it came from (filings, report, news event, ETF
-label, co-movement cluster). Mark style overlays separately from themes. Then the exposure
-grades, legend stated once, basis in brackets. Choose the layout that reads best: for a
-small basket (up to about 15 names) one line per name with its grade on each theme; for a larger basket
-group the names under each theme by grade (High names, then Medium, then Low), repeating a name
-under every theme it belongs to. Skip the ones graded None.
-Say which figures are disclosed and which are estimates. Then the co-movement result in one
-or two lines, or say it was not run.
+IV. Weighting Inference / 加权方法推测（Weighting Inference）
+State what the supplied numbers represent and the relevant dates, then the supported
+pattern and evidence grade. Explain material deviations, supported caps/rounding/drift,
+and alternatives that cannot be separated. Say when the rule or input semantics remain
+unresolved. Do not infer weights when none were supplied.
 
-III. Selection Method Inference
-Picking style within themes (pure-play, leaders, chain spread, tiering). Then the filters
-on top, one item each, each opening with a grade word and a colon. English: Confirmed /
-Fits / Suggested / Subjective (cannot be reverse-engineered) / Not found. Chinese: 证实 /
-吻合 / 推测 / 主观（无法反推）/ 找不到. Grades mean what Step 6h says. Content is told apart
-by the grade word, not by the numbers. State what the two-sided test showed for each
-quantitative filter. A filter you are confident is not used is left out entirely, not
-listed as ruled out. Include the sibling-basket partition if several baskets share a source.
-State the point-in-time date used and the data source once.
-
-IV. Weighting Inference
-Only if weights were given. The pattern, then the driver-by-driver test from Step 5: only
-the drivers that fit or that cannot be separated from each other, plus any that cannot be
-tested. A driver you are confident is not used is left out. If nothing explains the
-deviation, say so in one line.
-Close the last section (III if there are no weights) with the usability result from Step 9:
-one or two lines on whether the Verdict alone would reproduce the names and the weights,
-what a builder would add, drop or weight differently, and what rule is missing.
+Close the last section with the Step 9 usability result: whether the brief reproduces the
+construction logic, and any unresolved membership or weighting choices. Keep limitations
+and verification findings inside the relevant sections rather than adding boilerplate.
